@@ -141,7 +141,8 @@ tr.tot td{font-weight:700;background:var(--bg)}
   <a href="#s1" data-s="s1">① 변수 관계</a><span class="arrow">→</span>
   <a href="#s2" data-s="s2">② 협력사 비교</a><span class="arrow">→</span>
   <a href="#s3" data-s="s3">③ 설비 비교</a><span class="arrow">→</span>
-  <a href="#s4" data-s="s4">④ 확인 필요 · 논의</a>
+  <a href="#s4" data-s="s4">④ 확인 필요 · 논의</a><span class="arrow">→</span>
+  <a href="#s5" data-s="s5">⑤ 추가 탐색</a>
 </div></nav>
 
 <main class="wrap">
@@ -256,6 +257,39 @@ tr.tot td{font-weight:700;background:var(--bg)}
     </div>
   </section>
 
+  <section class="step" id="s5">
+    <div class="sh"><span class="no">5</span><h2>추가 탐색: 생산일별 변화</h2><span class="tag">기존 필터 적용 안 함</span></div>
+    <p class="q">④에서 남은 "오래 쓰면 커진다"를 시간 순서로 다시 봅니다. 불량률이 가장 높은 <b>A-L2-M2</b> 한 대만 골라, 생산일마다 평균 치수와 평균 공구 사용량을 나란히 놓았습니다. 점에 마우스를 올리면 값이 보입니다.</p>
+    <div class="filters" style="margin-top:0">
+      <span>설비 <b>A-L2-M2</b> (A사 2호선)</span>
+      <span>생산일 <b>2026-08-25 ~ 2026-10-14</b> (기록 있는 10일)</span>
+      <span>검사 부품 <b id="s5n">-</b></span>
+      <span class="hint">검사일이 아니라 <b>생산일시의 날짜</b> 기준입니다. 상단 작업조 필터는 이 영역에 적용되지 않습니다.</span>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <h3>생산일별 평균 치수 <span class="hint">(점선 = 목표 10.000mm)</span></h3>
+        <canvas id="cv5a" height="280"></canvas>
+        <div class="finding">평균 치수는 <b>08-25 9.994mm → 10-14 10.075mm</b>로 생산일이 늦을수록 대체로 커집니다. 09-15에만 조금 내려가고, 09-01부터는 모두 목표보다 위입니다. 날짜별 평균은 모두 상한 10.10mm 안쪽입니다.</div>
+      </div>
+      <div class="card">
+        <h3>생산일별 평균 공구 사용량 <span class="hint">(공구교체후누적가공수 평균)</span></h3>
+        <canvas id="cv5b" height="280"></canvas>
+        <div class="finding">평균 누적가공수는 <b>09-22에 292 → 510회</b>로 크게 늘고, <b>10-07에는 614 → 421회</b>로 줄었다가 다시 늘어납니다.</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h3>생산일별 수치</h3>
+      <div class="tblwrap"><table id="s5tbl"></table></div>
+      <div class="read"><b>더 살펴볼 날짜</b><br>
+        · <b>10-07</b>: 공구 사용량은 전날보다 약 190회 적은데 평균 치수는 10.068mm로 그대로 높습니다. 두 값이 같은 방향으로 움직이지 않은 날입니다.<br>
+        · <b>09-22</b>: 공구 사용량과 평균 치수가 같이 크게 올라간 날입니다.<br>
+        · 10월 생산일은 검사 부품이 103~125개로, 9월 이전(21~27개)보다 많습니다. 날짜마다 평균에 들어간 부품 수가 다르다는 점을 같이 읽어야 합니다.<br>
+        날짜별 평균이 같이 움직였다는 것만으로 원인을 정할 수는 없습니다. 공구 교체 이력과 맞춰 봐야 합니다.</div>
+      <div class="hint" style="margin-top:8px">평균 공구 사용량은 그날 만든 검사 부품들의 평균이며, 같은 칼날을 계속 썼다는 뜻은 아닙니다.</div>
+    </div>
+  </section>
+
   <div class="notice">※ 교육용 가상 자료입니다. 이 화면의 관계는 "같이 움직이는 정도"이며 인과를 입증하지 않습니다. 같은 배치의 부품은 독립 시험이 아니므로, 공구 교체 효과는 교체 전후 비교 등 별도 설계가 필요합니다. 데이터는 이 HTML 파일 안에 포함되어 있어 인터넷 없이 열립니다.</div>
 </main>
 <div id="tip"></div>
@@ -289,7 +323,7 @@ const slopeUnit=(xk)=>xk==='cum'?100:10; // per 100 uses / per 10 sec
 const slopeLab=(xk)=>xk==='cum'?'100회당':'10초당';
 
 /* ---------- canvas scatter ---------- */
-function setup(c){const dpr=window.devicePixelRatio||1;const w=c.clientWidth,h=+c.getAttribute('height');c.width=w*dpr;c.height=h*dpr;const g=c.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);return{g,w,h}}
+function setup(c){const dpr=window.devicePixelRatio||1;const w=c.clientWidth,h=+(c.dataset.h||(c.dataset.h=c.getAttribute('height')));c.style.height=h+'px';c.width=w*dpr;c.height=h*dpr;const g=c.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);return{g,w,h}}
 function ticks(a,b,n){const raw=(b-a)/n,p=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/p,s=(m<1.5?1:m<3?2:m<7?5:10)*p,o=[];for(let v=Math.ceil(a/s)*s;v<=b+1e-9;v+=s)o.push(+v.toFixed(6));return o}
 function scatter(c,groups,xk,yk,opt={}){
   const {g,w,h}=setup(c);const L=56,R=14,T=10,B=40;const pw=w-L-R,ph=h-T-B;
@@ -404,6 +438,32 @@ function render4(){
   $('s4read').innerHTML=`<b>전체</b> ${hi.s} 불량률 ${pct(hi.v)} > ${lo.s} ${pct(lo.v)}. 협력사 ${CO.length}곳 중 ${diff}곳에서 ${hi.s}이 더 높습니다. 상단 필터로 <b>작업조를 바꿔</b> ②·③ 결과가 유지되는지 확인해 보세요.`;
 }
 
+/* ---------- 5. 추가 탐색: 생산일별 변화 (A-L2-M2, 필터 미적용) ---------- */
+const DAILY={"eq":"A-L2-M2","rows":[["2026-08-25",22,9.9937,336.1],["2026-09-01",23,10.005,245.3],["2026-09-08",25,10.0242,271.8],["2026-09-15",25,10.019,291.8],["2026-09-22",27,10.0396,510.1],["2026-09-29",21,10.0495,563.1],["2026-10-06",125,10.0657,614.3],["2026-10-07",110,10.0677,421.0],["2026-10-13",125,10.0708,571.3],["2026-10-14",103,10.0745,645.3]]};
+const D5=DAILY.rows.map(a=>({d:a[0],t:Date.parse(a[0]),n:a[1],dim:a[2],cum:a[3]}));
+function line5(c,key,opt){
+  const {g,w,h}=setup(c);const L=56,R=16,T=18,B=44;const pw=w-L-R,ph=h-T-B;
+  const t0=D5[0].t-2*864e5,t1=D5[D5.length-1].t+2*864e5,yr=opt.yr;
+  const X=t=>L+(t-t0)/(t1-t0)*pw,Y=v=>T+ph-(v-yr[0])/(yr[1]-yr[0])*ph;
+  g.clearRect(0,0,w,h);g.font='11.5px sans-serif';g.strokeStyle=css('--grid');g.fillStyle=css('--sub');g.lineWidth=1;
+  ticks(yr[0],yr[1],5).forEach(v=>{const y=Y(v);g.beginPath();g.moveTo(L,y);g.lineTo(w-R,y);g.stroke();g.textAlign='right';g.textBaseline='middle';g.fillText(v.toFixed(opt.dec),L-6,y)});
+  D5.forEach((r,i)=>{const x=X(r.t),close=i>0&&r.t-D5[i-1].t<=864e5;g.textAlign='center';g.textBaseline='top';g.fillText(r.d.slice(5),x,T+ph+6+(close?13:0))});
+  g.save();g.translate(12,T+ph/2);g.rotate(-Math.PI/2);g.textAlign='center';g.fillText(opt.ylab,0,0);g.restore();
+  if(opt.target!=null){const y=Y(opt.target);g.strokeStyle=css('--ink');g.setLineDash([6,4]);g.lineWidth=1.2;g.beginPath();g.moveTo(L,y);g.lineTo(w-R,y);g.stroke();g.setLineDash([]);g.fillStyle=css('--ink');g.textAlign='right';g.textBaseline='bottom';g.fillText('목표 '+opt.target.toFixed(3),w-R-4,y-3)}
+  const col=css(opt.color);g.strokeStyle=col;g.lineWidth=2;g.beginPath();D5.forEach((r,i)=>{const x=X(r.t),y=Y(r[key]);i?g.lineTo(x,y):g.moveTo(x,y)});g.stroke();
+  const pts=[];D5.forEach(r=>{const x=X(r.t),y=Y(r[key]);g.fillStyle=col;g.beginPath();g.arc(x,y,4.5,0,6.283);g.fill();g.strokeStyle=css('--card');g.lineWidth=1.5;g.stroke();pts.push({px:x,py:y,r})});
+  c._pts=pts;
+  c.onmousemove=e=>{const b=c.getBoundingClientRect(),mx=e.clientX-b.left,my=e.clientY-b.top;let best=null,bd=400;for(const p of pts){const d=(p.px-mx)**2+(p.py-my)**2;if(d<bd){bd=d;best=p}}
+    if(best){const r=best.r;showTip(e,`<b>생산일 ${r.d}</b><br>검사 부품 ${r.n}개<br>평균 치수 ${r.dim.toFixed(3)}mm<br>평균 누적가공수 ${Math.round(r.cum)}회`)}else hideTip()};
+  c.onmouseleave=hideTip;
+}
+function render5(){
+  $('s5n').textContent=D5.reduce((a,r)=>a+r.n,0).toLocaleString()+'개';
+  line5($('cv5a'),'dim',{yr:[9.98,10.09],dec:2,ylab:'평균 측정치수(mm)',color:'--cA',target:10});
+  line5($('cv5b'),'cum',{yr:[200,700],dec:0,ylab:'평균 누적가공수(회)',color:'--accent'});
+  table($('s5tbl'),['생산일','검사 부품 수','평균 치수(mm)','목표와 차이(mm)','평균 누적가공수(회)'],D5.map(r=>[r.d,r.n,r.dim.toFixed(3),sgn(r.dim-10,3),Math.round(r.cum)]));
+}
+
 /* ---------- header ---------- */
 function renderHead(){
   const def=ROWS.reduce((a,r)=>a+r.def,0);$('kpiDef').textContent=pct(def/ROWS.length);$('kpiDefS').textContent=`${def}건 / ${ROWS.length.toLocaleString()}개`;
@@ -411,11 +471,11 @@ function renderHead(){
   $('kpiR1').textContent=sgn(pearson(ROWS,'time','dim'));$('kpiR2').textContent=sgn(pearson(ROWS,'cum','dim'));
 }
 function renderAll(){render1();render2();render3()}
-initControls();renderHead();renderAll();render4();
-let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(renderAll,150)});
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{renderAll();render4()});
+initControls();renderHead();renderAll();render4();render5();
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{renderAll();render5()},150)});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{renderAll();render4();render5()});
 // nav highlight
-const secs=['s1','s2','s3','s4'];
+const secs=['s1','s2','s3','s4','s5'];
 function nav(){let cur='s1';secs.forEach(id=>{if($(id).getBoundingClientRect().top<140)cur=id});document.querySelectorAll('nav.steps a').forEach(a=>a.classList.toggle('on',a.dataset.s===cur))}
 addEventListener('scroll',nav);nav();
 </script>
