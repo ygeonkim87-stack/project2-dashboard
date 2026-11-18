@@ -30,9 +30,11 @@
   .chart { width:100%; min-height:340px; }
   .filter { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 4px; }
   .filter button { border:1px solid var(--line); background:var(--card); color:var(--text); padding:6px 12px; border-radius:8px; cursor:pointer; font:inherit; font-size:.9rem; }
+  .filter-bar { position:sticky; top:0; z-index:5; background:var(--card); padding:8px 0; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .filter-bar .filter { margin:0; }
   .filter button.on { background:var(--accent); color:#fff; border-color:var(--accent); }
   .scope { font-size:.82rem; color:var(--muted); }
-  .kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:12px 0; }
+  .kpis { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:12px 0; }
   @media (max-width:620px) { .kpis { grid-template-columns:repeat(2,minmax(0,1fr)); } }
   .kpi { border:1px solid var(--line); border-radius:8px; padding:10px 12px; }
   .kpi b { display:block; font-size:1.35rem; }
@@ -91,12 +93,16 @@
   <section>
     <span class="period p-eval">평가 기간 · 2026-06-01 ~ 08-31</span>
     <h2>실제·예측 비교</h2>
-    <div class="filter" id="filter"></div>
-    <div class="scope">이 선택은 <b>이 영역(평가 기간 예측 결과)</b>에만 적용됩니다. 학습 기간 현황과 회귀계수는 바뀌지 않습니다.</div>
+    <div class="filter-bar"><b>매장 선택</b><div class="filter" id="filter"></div></div>
+    <div class="scope">선택은 <b>이 영역(평가 기간 예측 결과)</b>의 그래프·요약 수치·오차 기록·해석에 적용됩니다. 학습 기간 현황과 회귀계수는 바뀌지 않으며, 모델은 다시 학습하지 않고 처음 만든 모델의 예측값을 그대로 씁니다.</div>
     <div class="kpis" id="kpis"></div>
     <div class="row">
       <div><div id="scatter" class="chart" style="min-height:420px"></div></div>
       <div class="insight" id="insight"></div>
+    </div>
+    <div class="row">
+      <div><div id="line" class="chart"></div></div>
+      <div class="insight" id="lineInsight"></div>
     </div>
     <h3 style="margin-top:20px">예측오차가 큰 기록 · 절대값 상위 10</h3>
     <div class="row">
@@ -225,11 +231,15 @@ function render(sel){
   const rows = sel==='전체' ? P : P.filter(p=>p.store===sel);
   const n=rows.length, mae=rows.reduce((a,p)=>a+Math.abs(p.err),0)/n, rmse=Math.sqrt(rows.reduce((a,p)=>a+p.err*p.err,0)/n),
         me=rows.reduce((a,p)=>a+p.err,0)/n, under=rows.filter(p=>p.err>0).length/n*100;
+  const trainAvg = sel==='전체' ? D.trainMean.reduce((a,v)=>a+v,0)/D.trainMean.length : D.trainMean[D.stores.indexOf(sel)];
+  const actAvg = rows.reduce((a,p)=>a+p.actual,0)/n, predAvg = rows.reduce((a,p)=>a+p.pred,0)/n;
   document.getElementById('kpis').innerHTML =
     `<div class="kpi"><span>평균 절대오차</span><b>${f1(mae)}건</b></div>`+
     `<div class="kpi"><span>RMSE</span><b>${f1(rmse)}건</b></div>`+
     `<div class="kpi"><span>평균 오차(실제−예측)</span><b class="${me>0?'pos':'neg'}">${me>0?'+':''}${f1(me)}건</b></div>`+
-    `<div class="kpi"><span>적게 예측한 비율</span><b>${f1(under)}%</b></div>`;
+    `<div class="kpi"><span>적게 예측한 비율</span><b>${f1(under)}%</b></div>`+
+    `<div class="kpi"><span>학습 기간 평균 주문</span><b>${f1(trainAvg)}건</b></div>`+
+    `<div class="kpi"><span>평가 기간 평균 실제 / 예측</span><b>${f1(actAvg)} / ${f1(predAvg)}건</b></div>`;
 
   // 산점도
   const groups = sel==='전체' ? D.stores : [sel];
@@ -242,6 +252,22 @@ function render(sel){
     xaxis:Object.assign(ax('실제 주문건수 (건)'),{range:[allMin,allMax]}), yaxis:Object.assign(ax('예측 주문건수 (건)'),{range:[allMin,allMax], scaleanchor:'x'}),
     legend:{orientation:'h', y:-0.18},
     annotations:[{xref:'paper',yref:'paper',x:0.03,y:0.97,xanchor:'left',text:'위: 많게 예측',showarrow:false,font:{color:'#1f77b4'}},{xref:'paper',yref:'paper',x:0.97,y:0.03,xanchor:'right',text:'아래: 적게 예측',showarrow:false,font:{color:'#d62728'}}]}), cfg);
+
+  // 날짜별 실제·예측 (전체는 5개 매장 합산)
+  const byDate = {};
+  rows.forEach(p=>{ (byDate[p.date] ||= {a:0,p:0}); byDate[p.date].a+=p.actual; byDate[p.date].p+=p.pred; });
+  const dates = Object.keys(byDate).sort(), lab = sel==='전체' ? ' (5개 매장 합산)' : '';
+  Plotly.react('line', [
+    {type:'scatter', mode:'lines', name:'실제'+lab, x:dates, y:dates.map(d=>byDate[d].a), line:{color:sel==='전체'?fg:COLORS[sel], width:2},
+     customdata:dates.map(d=>[f1(byDate[d].p), (byDate[d].a-byDate[d].p>0?'+':'')+f1(byDate[d].a-byDate[d].p)]), hovertemplate:'%{x}<br>실제 %{y}건 · 예측 %{customdata[0]}건<br>차이 %{customdata[1]}건<extra></extra>'},
+    {type:'scatter', mode:'lines', name:'예측'+lab, x:dates, y:dates.map(d=>byDate[d].p), line:{color:'#888', width:2, dash:'dot'}, hoverinfo:'skip'}],
+    base({title:{text:'날짜별 실제·예측 주문건수'+lab, font:{size:14}}, xaxis:{gridcolor:grid, tickformat:'%-m/%-d'}, yaxis:ax('주문건수 (건)'), legend:{orientation:'h', y:-0.18}}), cfg);
+  const mon = ['06','07','08'].map(m=>{ const r=rows.filter(p=>p.date.slice(5,7)===m); return [ +m, r.reduce((a,p)=>a+p.err,0)/r.length, r.reduce((a,p)=>a+p.actual,0)/r.length ]; });
+  const trend = mon[2][1]-mon[0][1];
+  document.getElementById('lineInsight').innerHTML = `<b>월별 근거 수치</b>
+    <table style="margin-top:6px"><tr><th>월</th><th class="num">평균 실제</th><th class="num">평균 오차</th></tr>${mon.map(m=>`<tr><td>${m[0]}월</td><td class="num">${f1(m[2])}</td><td class="num ${m[1]>0?'pos':'neg'}">${m[1]>0?'+':''}${f1(m[1])}</td></tr>`).join('')}</table>
+    <p style="margin:8px 0 0">${Math.abs(trend)<10 ? '월별 오차가 큰 변화 없이 비슷합니다.' : (mon[0][1]<0 && mon[2][1]>mon[0][1]) ? `6월에는 평균 ${f1(-mon[0][1])}건 <b>많게 예측</b>했지만 8월에는 그 차이가 ${f1(Math.abs(mon[2][1]))}건으로 줄었습니다. 평가 기간 안에서 실제 주문이 다시 늘었습니다(${f1(mon[0][2])} → ${f1(mon[2][2])}건).` : trend>0 ? `6월보다 8월에 <b>적게 예측하는 쪽으로 ${f1(trend)}건</b> 더 기울었습니다. 실제 주문이 늘어나는 흐름(${f1(mon[0][2])} → ${f1(mon[2][2])}건)을 모델이 따라가지 못합니다.` : mon[2][1]>0 ? `여전히 적게 예측하지만, 그 차이가 6월 ${f1(mon[0][1])}건에서 8월 ${f1(mon[2][1])}건으로 줄었습니다(실제 ${f1(mon[0][2])} → ${f1(mon[2][2])}건).` : `6월보다 8월에 <b>많게 예측하는 쪽으로 ${f1(-trend)}건</b> 기울었습니다(실제 ${f1(mon[0][2])} → ${f1(mon[2][2])}건).`}</p>
+    <p class="note">${sel==='전체'?'5개 매장 합산 기준 그래프이고, 표는 매장·날짜별 기록 평균입니다.':'선 위에 마우스를 올리면 날짜별 실제·예측·차이를 볼 수 있습니다.'}</p>`;
 
   // 차이가 큰 기록 (+ 모두 같은 방향이면 반대 방향 상위 3)
   const sorted = [...rows].sort((a,b)=>Math.abs(b.err)-Math.abs(a.err));
@@ -260,7 +286,14 @@ function render(sel){
     <li>상위 10건 중 <span class="pos">적게 예측 ${nU}건</span>, <span class="neg">많게 예측 ${10-nU}건</span> · ${cntTxt}</li>
     ${sel==='전체' ? `<li><span class="pos"><b>적게 예측</b></span>: 잠실이 6건이고 7/2~3, 7/28~30에 몰려 있습니다. 모델은 학습 기간 잠실 수준(270~330건)으로 예측했지만 실제는 476~575건이었습니다. 평가 기간에 주문 수준 자체가 오른 것으로 보입니다. 할인율은 모두 0~5%였습니다.</li>
     <li><span class="neg"><b>많게 예측</b></span>: 상위 3건이 모두 강남입니다. 강남은 평가 기간 평균이 학습 기간보다 낮아졌고, 8/15는 모델에 넣지 않은 공휴일(광복절)입니다.</li>
-    <li>많게 예측한 최대 오차(−128.8건)는 적게 예측한 최대 오차(+248.1건)의 절반 정도입니다.</li>` : ''}
+    <li>많게 예측한 최대 오차(−128.8건)는 적게 예측한 최대 오차(+248.1건)의 절반 정도입니다.</li>` : (()=>{
+      const u=[...rows].sort((a,b)=>b.err-a.err)[0], o=[...rows].sort((a,b)=>a.err-b.err)[0];
+      const mo={}; top.forEach(p=>{const k=+p.date.slice(5,7)+'월'; mo[k]=(mo[k]||0)+1;});
+      const dw={}; top.forEach(p=>dw[p.dow]=(dw[p.dow]||0)+1);
+      const topDw=Object.entries(dw).sort((a,b)=>b[1]-a[1])[0];
+      return `<li><span class="pos"><b>가장 적게 예측</b></span>: ${u.date}(${u.dow}) 실제 ${u.actual}건, 예측 ${f1(u.pred)}건 (${u.err>0?'+':''}${f1(u.err)})</li>
+      <li><span class="neg"><b>가장 많게 예측</b></span>: ${o.date}(${o.dow}) 실제 ${o.actual}건, 예측 ${f1(o.pred)}건 (${f1(o.err)})</li>
+      <li>상위 10건의 월 분포: ${Object.entries(mo).map(([k,v])=>k+' '+v+'건').join(', ')} · 가장 많은 요일: ${topDw[0]}요일 ${topDw[1]}건</li>`; })()}
     </ul><p class="note">원인 확인에 도움이 될 정보: 광고예산·공휴일여부(이미 보유), 전날·지난주 주문건수, 주변 행사, 날씨, 매장 운영 변화.</p>`;
   document.getElementById('top').innerHTML = thead + top.map(trow).join('');
 
