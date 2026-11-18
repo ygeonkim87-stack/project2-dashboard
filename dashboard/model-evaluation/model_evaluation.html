@@ -78,26 +78,14 @@
 
   <section>
     <h2>그래프</h2>
-    <div class="tabs" id="dimTabs">
-      <button data-dim="2d" aria-pressed="true">2D</button>
-      <button data-dim="3d" aria-pressed="false">3D</button>
-    </div>
-    <div id="gallery"></div>
-    <p class="note">3D는 전체 경향을 보는 보조 그래프입니다. 원근 때문에 앞쪽 막대가 커 보이니 정확한 값은 2D 그래프나 표에서 읽으세요.</p>
+    <h3 style="font-size:1rem;margin:16px 0 8px">네 방법 비교 4D — 매장 × 모델 × 오차 크기(높이) × 오차 방향(색)</h3>
+    <img src="graphs/%EB%84%A4%EB%B0%A9%EB%B2%95_MAE_RMSE_%ED%8F%89%EA%B7%A0%EC%98%A4%EC%B0%A8_4D.png" alt="네 방법 MAE·RMSE와 평균오차 4D 그래프">
+    <p class="note">높이는 MAE·RMSE, 색은 평균오차(실제 − 예측)입니다. 파랑은 적게, 빨강은 많게 예측한 것입니다. 매장별 평균 vs 첫 회귀, 세 방법 비교도 이 한 장에 모두 담겨 있습니다.</p>
+    <h3 style="font-size:1rem;margin:24px 0 8px">잠실역매장 날짜별 예측오차 3D (첫 회귀)</h3>
+    <img src="graphs/%EC%9E%A0%EC%8B%A4%EC%97%AD%EB%A7%A4%EC%9E%A5_%EB%82%A0%EC%A7%9C%EB%B3%84_%EC%98%88%EC%B8%A1%EC%98%A4%EC%B0%A8_3D.png" alt="잠실역매장 날짜별 예측오차 3D 그래프">
+    <p class="note">날짜마다 오차 하나를 보는 그래프라 4D로 더할 정보가 없어 3D로 그렸습니다. 0 기준선 위 파랑은 적게 예측한 날입니다.</p>
+    <p class="note">원근 때문에 앞쪽 막대가 커 보일 수 있으니 정확한 값은 위 표에서 읽으세요.</p>
   </section>
 </main>
-<script>
-  const sets = {
-    '2d': [['네 방법 MAE·RMSE 비교','네방법_MAE_RMSE_비교.png'],['세 방법 비교','세방법_MAE_RMSE_비교.png'],['매장별 평균 vs 첫 회귀','매장별평균_vs_첫회귀_MAE_RMSE.png'],['잠실역매장 날짜별 예측오차 (첫 회귀)','잠실역매장_날짜별_예측오차.png']],
-    '3d': [['네 방법 비교 3D','네방법_MAE_RMSE_비교_3D.png'],['세 방법 비교 3D','세방법_MAE_RMSE_비교_3D.png'],['매장별 평균 vs 첫 회귀 3D','매장별평균_vs_첫회귀_MAE_RMSE_3D.png'],['잠실역매장 날짜별 예측오차 3D','잠실역매장_날짜별_예측오차_3D.png']]
-  };
-  const g = document.getElementById('gallery');
-  function render(dim) {
-    g.innerHTML = sets[dim].map(([t,f]) => `<h3 style="font-size:1rem;margin:16px 0 8px">${t}</h3><img loading="lazy" src="graphs/${encodeURIComponent(f)}" alt="${t}">`).join('');
-    document.querySelectorAll('#dimTabs button').forEach(b => b.setAttribute('aria-pressed', b.dataset.dim === dim));
-  }
-  document.querySelectorAll('#dimTabs button').forEach(b => b.onclick = () => render(b.dataset.dim));
-  render('2d');
-</script>
 </body>
 </html>
