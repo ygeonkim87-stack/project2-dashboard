@@ -33,6 +33,7 @@
   .tabs { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:12px; }
   .tabs button { font:inherit; padding:6px 14px; border:1px solid var(--line); border-radius:999px; background:transparent; color:var(--muted); cursor:pointer; }
   .tabs button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .scope { display:inline-block; font-size:.8rem; font-weight:600; color:var(--accent); background:color-mix(in srgb,var(--accent) 12%,transparent); padding:2px 10px; border-radius:999px; margin-bottom:10px; }
   .note { color:var(--muted); font-size:.85rem; margin-top:8px; }
 </style>
 </head>
@@ -45,14 +46,14 @@
   <div class="kpis">
     <div class="kpi"><span>매장별 평균 MAE</span><b>59.4</b></div>
     <div class="kpi"><span>첫 회귀 MAE</span><b>56.3</b></div>
-    <div class="kpi"><span>정보추가 MAE</span><b>47.4</b></div>
+    <div class="kpi"><span>운영정보 추가 MAE</span><b>47.4</b></div>
     <div class="kpi"><span>행사정보 추가 MAE</span><b style="color:var(--good)">46.0</b></div>
   </div>
 
   <section>
     <h2>네 방법 비교 (낮을수록 좋음, 단위: 주문건수)</h2>
     <div class="scroll"><table>
-      <thead><tr><th>매장</th><th>MAE 매장별 평균</th><th>MAE 첫 회귀</th><th>MAE 정보추가</th><th>MAE 행사정보 추가</th><th>RMSE 매장별 평균</th><th>RMSE 첫 회귀</th><th>RMSE 정보추가</th><th>RMSE 행사정보 추가</th></tr></thead>
+      <thead><tr><th>매장</th><th>MAE 매장별 평균</th><th>MAE 첫 회귀</th><th>MAE 운영정보 추가</th><th>MAE 행사정보 추가</th><th>RMSE 매장별 평균</th><th>RMSE 첫 회귀</th><th>RMSE 운영정보 추가</th><th>RMSE 행사정보 추가</th></tr></thead>
       <tbody>
         <tr><td><b>전체</b></td><td>59.4</td><td>56.3</td><td>47.4</td><td class="best">46.0</td><td>74.9</td><td>70.0</td><td>60.8</td><td class="best">56.3</td></tr>
         <tr><td>강남역매장</td><td>40.4</td><td class="best">36.1</td><td class="worse">44.8</td><td>38.4</td><td>49.3</td><td class="best">44.8</td><td class="worse">53.7</td><td>46.5</td></tr>
@@ -62,7 +63,7 @@
         <tr><td>판교역매장</td><td>53.1</td><td>47.1</td><td>33.9</td><td class="best">32.5</td><td>70.2</td><td>61.6</td><td>48.0</td><td class="best">40.4</td></tr>
       </tbody>
     </table></div>
-    <p class="note">매장별 평균 = 학습기간 매장 평균 · 첫 회귀 = 매장·요일·영업예정시간·예정할인율 · 정보추가 = 첫 회귀 + 광고예산·공휴일여부·월 · 행사정보 추가 = 정보추가 + 주변행사여부</p>
+    <p class="note">매장별 평균 = 학습기간 매장 평균 · 첫 회귀 = 매장·요일·영업예정시간·예정할인율 · 운영정보 추가 = 첫 회귀 + 광고예산·공휴일여부·월 · 행사정보 추가 = 운영정보 추가 + 주변행사여부</p>
   </section>
 
   <section>
@@ -82,6 +83,46 @@
     <img src="graphs/%EB%84%A4%EB%B0%A9%EB%B2%95_MAE_RMSE_%ED%8F%89%EA%B7%A0%EC%98%A4%EC%B0%A8_4D.png" alt="네 방법 MAE·RMSE와 평균오차 그래프">
     <h3 style="font-size:1rem;margin:24px 0 8px">잠실역매장 날짜별 예측오차 (첫 회귀)</h3>
     <img src="graphs/%EC%9E%A0%EC%8B%A4%EC%97%AD%EB%A7%A4%EC%9E%A5_%EB%82%A0%EC%A7%9C%EB%B3%84_%EC%98%88%EC%B8%A1%EC%98%A4%EC%B0%A8_3D.png" alt="잠실역매장 날짜별 예측오차 그래프">
+  </section>
+
+  <section id="big-under">
+    <h2>큰 과소 예측 기록 검토</h2>
+    <span class="scope">고정 범위 · 전체 5개 매장 · 2026-06-01~08-31 · 460기록(매장·일) · 기준: 실제 − 예측 ≥ 50건</span>
+    <div class="kpis" style="margin-bottom:12px">
+      <div class="kpi"><span>운영정보 추가</span><b>136건</b><span>29.6%</span></div>
+      <div class="kpi"><span>행사정보 추가</span><b style="color:var(--bad)">149건</b><span>32.4%</span></div>
+      <div class="kpi"><span>행사 있는 날</span><b>26 → 9건</b></div>
+      <div class="kpi"><span>행사 없는 날</span><b style="color:var(--bad)">110 → 140건</b></div>
+    </div>
+    <div class="scroll"><table>
+      <thead><tr><th>매장</th><th>운영정보 추가</th><th>행사정보 추가</th><th>변화</th></tr></thead>
+      <tbody>
+        <tr><td>강남역매장</td><td>5</td><td>0</td><td class="best">−5</td></tr>
+        <tr><td>수원역매장</td><td>20</td><td>20</td><td>0</td></tr>
+        <tr><td>양재역매장</td><td>33</td><td>40</td><td class="worse">+7</td></tr>
+        <tr><td>잠실역매장</td><td>63</td><td>69</td><td class="worse">+6</td></tr>
+        <tr><td>판교역매장</td><td>15</td><td>20</td><td class="worse">+5</td></tr>
+        <tr><td><b>전체</b></td><td><b>136</b></td><td><b>149</b></td><td class="worse"><b>+13</b></td></tr>
+      </tbody>
+    </table></div>
+    <img style="margin-top:16px" src="graphs/%ED%81%B0%EA%B3%BC%EC%86%8C%EC%98%88%EC%B8%A1_%EB%A7%A4%EC%9E%A5%EB%B3%84_%EA%B8%B0%EB%A1%9D%EC%88%98.png" alt="매장별 큰 과소 예측 기록 수">
+    <h3 style="font-size:1rem;margin:20px 0 8px">대표 기록 (행사정보 추가 기준, 차이가 큰 순)</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>날짜</th><th>매장</th><th>행사종류</th><th>실제</th><th>운영정보 추가 예측</th><th>행사정보 추가 예측</th><th>실제 − 예측</th></tr></thead>
+      <tbody>
+        <tr><td>2026-06-14</td><td>잠실역매장</td><td>없음</td><td>517</td><td>368.5</td><td>355.6</td><td>161.4</td></tr>
+        <tr><td>2026-08-23</td><td>판교역매장</td><td>없음</td><td>594</td><td>458.5</td><td>439.1</td><td>154.9</td></tr>
+        <tr><td>2026-06-15</td><td>잠실역매장</td><td>없음</td><td>437</td><td>298.2</td><td>286.0</td><td>151.0</td></tr>
+        <tr><td>2026-06-16</td><td>잠실역매장</td><td>없음</td><td>451</td><td>314.5</td><td>304.0</td><td>147.0</td></tr>
+        <tr><td>2026-07-03</td><td>잠실역매장</td><td>체육행사</td><td>575</td><td>335.8</td><td>437.9</td><td>137.1</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li><b>평균 오차는 줄었지만 큰 과소 예측은 13건 늘었습니다.</b></li>
+      <li>해소된 17건은 모두 행사 있는 날이고, 새로 생긴 30건은 모두 행사 없는 날입니다.</li>
+      <li>행사 효과를 따로 배우면서 행사 없는 날의 예측이 낮아져, 그날들이 기준선을 넘게 됐습니다.</li>
+      <li>잠실역·양재역매장에 몰려 있어 주문 수준 변화를 반영하는 것이 다음 과제입니다.</li>
+    </ul>
   </section>
 </main>
 </body>
