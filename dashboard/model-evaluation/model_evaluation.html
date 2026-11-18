@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>주문량 예측 모델 평가</title>
+<style>
+  :root { --bg:#f7f7f5; --card:#fff; --text:#1f2328; --muted:#5f6670; --line:#e3e3df; --accent:#2f6fde; --good:#1f7a4d; --bad:#c2410c; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#16181b; --card:#1f2226; --text:#e8eaed; --muted:#a0a6ad; --line:#30343a; --accent:#7aa7ff; --good:#5cc08b; --bad:#f08a5d; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; line-height:1.65; }
+  main { max-width:960px; margin:0 auto; padding:40px 16px 64px; }
+  a.back { color:var(--accent); text-decoration:none; font-size:.9rem; }
+  h1 { font-size:1.6rem; margin:8px 0 4px; }
+  p.sub { color:var(--muted); margin:0 0 24px; }
+  section { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:20px; margin-bottom:20px; }
+  h2 { font-size:1.15rem; margin:0 0 12px; }
+  .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:20px; }
+  .kpi { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px; }
+  .kpi b { display:block; font-size:1.5rem; }
+  .kpi span { color:var(--muted); font-size:.85rem; }
+  .scroll { overflow-x:auto; }
+  table { border-collapse:collapse; width:100%; font-size:.9rem; font-variant-numeric:tabular-nums; }
+  th, td { padding:6px 8px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap; }
+  th:first-child, td:first-child { text-align:left; }
+  th { color:var(--muted); font-weight:600; }
+  td.best { color:var(--good); font-weight:700; }
+  td.worse { color:var(--bad); }
+  ul { margin:8px 0 0; padding-left:20px; }
+  img { width:100%; height:auto; border:1px solid var(--line); border-radius:8px; background:#fff; }
+  .tabs { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:12px; }
+  .tabs button { font:inherit; padding:6px 14px; border:1px solid var(--line); border-radius:999px; background:transparent; color:var(--muted); cursor:pointer; }
+  .tabs button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .note { color:var(--muted); font-size:.85rem; margin-top:8px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../index.html#cafe">← Project2 대시보드</a>
+  <h1>주문량 예측 모델 평가</h1>
+  <p class="sub">06회차 · 평가기간 2026-06-01~08-31 (5개 매장 × 92일 = 460행) · 학습기간 2024-11-01~2026-05-31. 교육용 가상 매장 자료입니다.</p>
+
+  <div class="kpis">
+    <div class="kpi"><span>매장별 평균 MAE</span><b>59.4</b></div>
+    <div class="kpi"><span>첫 회귀 MAE</span><b>56.3</b></div>
+    <div class="kpi"><span>정보추가 MAE</span><b>47.4</b></div>
+    <div class="kpi"><span>행사정보 추가 MAE</span><b style="color:var(--good)">46.0</b></div>
+  </div>
+
+  <section>
+    <h2>네 방법 비교 (낮을수록 좋음, 단위: 주문건수)</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>매장</th><th>MAE 매장별 평균</th><th>MAE 첫 회귀</th><th>MAE 정보추가</th><th>MAE 행사정보 추가</th><th>RMSE 매장별 평균</th><th>RMSE 첫 회귀</th><th>RMSE 정보추가</th><th>RMSE 행사정보 추가</th></tr></thead>
+      <tbody>
+        <tr><td><b>전체</b></td><td>59.4</td><td>56.3</td><td>47.4</td><td class="best">46.0</td><td>74.9</td><td>70.0</td><td>60.8</td><td class="best">56.3</td></tr>
+        <tr><td>강남역매장</td><td>40.4</td><td class="best">36.1</td><td class="worse">44.8</td><td>38.4</td><td>49.3</td><td class="best">44.8</td><td class="worse">53.7</td><td>46.5</td></tr>
+        <tr><td>수원역매장</td><td>47.4</td><td>45.3</td><td>36.0</td><td class="best">34.1</td><td>59.3</td><td>54.1</td><td>44.9</td><td class="best">41.9</td></tr>
+        <tr><td>양재역매장</td><td>62.6</td><td>60.6</td><td class="best">45.4</td><td>47.5</td><td>75.3</td><td>68.5</td><td>54.3</td><td class="best">53.6</td></tr>
+        <tr><td>잠실역매장</td><td>93.4</td><td>92.1</td><td class="best">76.8</td><td>77.5</td><td>107.2</td><td>105.2</td><td>91.2</td><td class="best">86.0</td></tr>
+        <tr><td>판교역매장</td><td>53.1</td><td>47.1</td><td>33.9</td><td class="best">32.5</td><td>70.2</td><td>61.6</td><td>48.0</td><td class="best">40.4</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">매장별 평균 = 학습기간 매장 평균 · 첫 회귀 = 매장·요일·영업예정시간·예정할인율 · 정보추가 = 첫 회귀 + 광고예산·공휴일여부·월 · 행사정보 추가 = 정보추가 + 주변행사여부</p>
+  </section>
+
+  <section>
+    <h2>해석</h2>
+    <ul>
+      <li><b>첫 회귀는 매장별 평균보다 조금 낫습니다.</b> 하루 오차가 약 3건 줄었습니다(59.4 → 56.3).</li>
+      <li><b>'월' 정보가 가장 크게 기여했습니다.</b> 여름(6월 +30, 8월 +40건)의 주문 증가를 배워 전체 MAE가 47.4로 줄었습니다.</li>
+      <li><b>주변행사여부는 크게 빗나가던 날을 잡았습니다.</b> 행사 효과는 약 +107건이고, 행사일 30일의 MAE가 116.5에서 48.2로 줄어 RMSE가 특히 개선됐습니다.</li>
+      <li><b>강남역매장은 월 정보를 넣은 뒤 나빠졌습니다.</b> 이 매장만 여름에 주문이 줄었는데, 모델은 모든 매장에 같은 월 효과를 더하기 때문입니다.</li>
+      <li><b>여전히 대체로 적게 예측합니다.</b> 잠실역매장은 평균 +75건 모자랍니다. 2026년 매장별 주문 수준이 늘어난 것을 아직 담지 못합니다.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>그래프</h2>
+    <div class="tabs" id="dimTabs">
+      <button data-dim="2d" aria-pressed="true">2D</button>
+      <button data-dim="3d" aria-pressed="false">3D</button>
+      <button data-dim="4d" aria-pressed="false">4D (색 = 평균오차)</button>
+    </div>
+    <div id="gallery"></div>
+    <p class="note">3D·4D는 전체 경향을 보는 보조 그래프입니다. 원근 때문에 앞쪽 막대가 커 보이니 정확한 값은 2D 그래프나 표에서 읽으세요.</p>
+  </section>
+</main>
+<script>
+  const sets = {
+    '2d': [['네 방법 MAE·RMSE 비교','네방법_MAE_RMSE_비교.png'],['세 방법 비교','세방법_MAE_RMSE_비교.png'],['매장별 평균 vs 첫 회귀','매장별평균_vs_첫회귀_MAE_RMSE.png'],['잠실역매장 날짜별 예측오차 (첫 회귀)','잠실역매장_날짜별_예측오차.png']],
+    '3d': [['네 방법 비교 3D','네방법_MAE_RMSE_비교_3D.png'],['세 방법 비교 3D','세방법_MAE_RMSE_비교_3D.png'],['매장별 평균 vs 첫 회귀 3D','매장별평균_vs_첫회귀_MAE_RMSE_3D.png'],['잠실역매장 날짜별 예측오차 3D','잠실역매장_날짜별_예측오차_3D.png']],
+    '4d': [['네 방법 비교 4D: 높이 = MAE·RMSE, 색 = 평균오차 (파랑 적게 / 빨강 많게 예측)','네방법_MAE_RMSE_평균오차_4D.png']]
+  };
+  const g = document.getElementById('gallery');
+  function render(dim) {
+    g.innerHTML = sets[dim].map(([t,f]) => `<h3 style="font-size:1rem;margin:16px 0 8px">${t}</h3><img loading="lazy" src="graphs/${encodeURIComponent(f)}" alt="${t}">`).join('');
+    document.querySelectorAll('#dimTabs button').forEach(b => b.setAttribute('aria-pressed', b.dataset.dim === dim));
+  }
+  document.querySelectorAll('#dimTabs button').forEach(b => b.onclick = () => render(b.dataset.dim));
+  render('2d');
+</script>
+</body>
+</html>
