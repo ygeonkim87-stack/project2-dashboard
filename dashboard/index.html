@@ -5,32 +5,52 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Project2 대시보드</title>
 <style>
-  :root { --bg:#f7f7f5; --card:#fff; --text:#1f2328; --muted:#5f6670; --line:#e3e3df; --accent:#2f6fde; }
+  :root { --bg:#f7f7f5; --card:#fff; --text:#1f2328; --muted:#5f6670; --line:#e3e3df; --accent:#2f6fde; --chip:#eef3fc; }
   @media (prefers-color-scheme: dark) {
-    :root { --bg:#16181b; --card:#1f2226; --text:#e8eaed; --muted:#a0a6ad; --line:#30343a; --accent:#7aa7ff; }
+    :root { --bg:#16181b; --card:#1f2226; --text:#e8eaed; --muted:#a0a6ad; --line:#30343a; --accent:#7aa7ff; --chip:#252b36; }
   }
-  * { box-sizing: border-box; }
+  * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; line-height:1.6; }
-  main { max-width:720px; margin:0 auto; padding:48px 16px; }
+  main { max-width:880px; margin:0 auto; padding:48px 16px; }
   h1 { font-size:1.6rem; margin:0 0 4px; }
   p.sub { color:var(--muted); margin:0 0 24px; }
-  .tabs { display:flex; gap:4px; border-bottom:1px solid var(--line); margin-bottom:24px; }
-  .tabs a { padding:10px 16px; color:var(--muted); text-decoration:none; font-weight:600; border-bottom:2px solid transparent; margin-bottom:-1px; }
+  .tabs { display:flex; gap:4px; border-bottom:1px solid var(--line); margin-bottom:24px; overflow-x:auto; }
+  .tabs a { padding:10px 16px; color:var(--muted); text-decoration:none; font-weight:600; border-bottom:2px solid transparent; margin-bottom:-1px; white-space:nowrap; }
   .tabs a:hover { color:var(--text); }
   .tabs a[aria-selected="true"] { color:var(--accent); border-bottom-color:var(--accent); }
   .panel[hidden] { display:none; }
   .panel > p { color:var(--muted); margin:0 0 16px; font-size:.95rem; }
-  a.card { display:block; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:20px; margin-bottom:16px; color:inherit; text-decoration:none; }
-  a.card:hover { border-color:var(--accent); }
+
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; margin-bottom:20px; overflow:hidden; }
+  .card:hover { border-color:var(--accent); }
+  .body { padding:18px 20px 20px; }
   .tag { font-size:.8rem; color:var(--accent); font-weight:600; }
-  .card h2 { font-size:1.15rem; margin:4px 0; }
-  .card p { margin:0; color:var(--muted); font-size:.95rem; }
+  .card h2 { font-size:1.15rem; margin:2px 0 8px; }
+  .card h2 a { color:inherit; text-decoration:none; }
+  .card h2 a:hover { color:var(--accent); }
+  .points { margin:0 0 12px; padding-left:18px; font-size:.92rem; }
+  .points li { margin:2px 0; }
+  .points b { font-variant-numeric:tabular-nums; }
+  .more { display:inline-block; font-size:.9rem; font-weight:600; color:var(--accent); text-decoration:none; }
+  .more:hover { text-decoration:underline; }
+
+  .slider { position:relative; background:#fff; border-bottom:1px solid var(--line); }
+  .track { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; }
+  .track::-webkit-scrollbar { display:none; }
+  .slide { flex:0 0 100%; scroll-snap-align:start; margin:0; }
+  .slide img { display:block; width:100%; height:300px; object-fit:contain; background:#fff; }
+  .slide figcaption { font-size:.82rem; color:#5f6670; text-align:center; padding:4px 12px 10px; background:#fff; }
+  .nav { position:absolute; top:130px; width:36px; height:36px; border-radius:50%; border:1px solid #d5d8dd; background:rgba(255,255,255,.92); color:#1f2328; font-size:1.1rem; cursor:pointer; display:grid; place-items:center; }
+  .nav:hover { border-color:#2f6fde; color:#2f6fde; }
+  .prev { left:10px; } .next { right:10px; }
+  .dots { position:absolute; right:12px; top:10px; background:rgba(31,35,40,.7); color:#fff; font-size:.75rem; padding:2px 8px; border-radius:999px; font-variant-numeric:tabular-nums; }
+  @media (max-width:560px) { .slide img { height:200px; } .nav { top:82px; } }
 </style>
 </head>
 <body>
 <main>
   <h1>Project2 대시보드</h1>
-  <p class="sub">데이터 분석 실습 결과를 주제별로 모았습니다.</p>
+  <p class="sub">데이터 분석 실습 결과를 주제별로 모았습니다. 카드의 그래프는 좌우로 넘겨 볼 수 있습니다.</p>
 
   <nav class="tabs" role="tablist">
     <a href="#quality" role="tab" id="tab-quality" aria-controls="quality">입고검사 품질 분석</a>
@@ -39,35 +59,75 @@
 
   <div class="panel" id="quality" role="tabpanel" aria-labelledby="tab-quality">
     <p>입고검사 데이터로 협력사 품질과 생산조건을 살펴봅니다.</p>
-    <a class="card" href="inspection-eda/inspection_dashboard.html">
-      <span class="tag">02회차</span>
-      <h2>입고검사 EDA 대시보드</h2>
-      <p>협력사·작업조별 검사 결과와 불량률을 탐색합니다.</p>
-    </a>
-    <a class="card" href="supplier-review/supplier_review.html">
-      <span class="tag">03회차</span>
-      <h2>협력사 품질 검토</h2>
-      <p>협력사별 치수 분포, A사 주차별 비교, 라인·작업조 히트맵과 검토 의견을 정리합니다.</p>
-    </a>
-    <a class="card" href="correlation/correlation_dashboard.html">
-      <span class="tag">04회차</span>
-      <h2>협력사 생산조건 검토</h2>
-      <p>가공시간·누적가공수와 치수의 관계, 협력사·설비별 비교를 확인합니다.</p>
-    </a>
+
+    <article class="card" data-base="inspection-eda/graphs/" data-slides='[["01_협력사_라인별_불량률.png","협력사·라인별 불량률"],["02_불량유형_건수.png","불량유형별 건수"]]'>
+      <div class="body">
+        <span class="tag">02회차</span>
+        <h2><a href="inspection-eda/inspection_dashboard.html">입고검사 EDA 대시보드</a></h2>
+        <ul class="points">
+          <li>부품 6,000개 검사, 전체 불량률 <b>4.67%</b></li>
+          <li>협력사 A <b>8.51%</b> · B 2.86% · C 1.40% — A사가 C사의 약 6배</li>
+          <li>불량 대부분은 <b>치수 기준 이탈</b>(175개), 중량 이탈 60개</li>
+        </ul>
+        <a class="more" href="inspection-eda/inspection_dashboard.html">대시보드 열기 →</a>
+      </div>
+    </article>
+
+    <article class="card" data-base="supplier-review/graphs/" data-slides='[["01_협력사별_측정치수_히스토그램.png","협력사별 측정치수 분포"],["02_협력사별_측정치수_박스플롯.png","협력사별 측정치수 박스플롯"],["03_A사_1주차_8주차_정상부품_치수_히스토그램.png","A사 1주차 vs 8주차 정상부품 치수"],["04_A사_라인_작업조별_불량수량_불량률_히트맵.png","A사 라인·작업조별 불량률"]]'>
+      <div class="body">
+        <span class="tag">03회차</span>
+        <h2><a href="supplier-review/supplier_review.html">협력사 품질 검토</a></h2>
+        <ul class="points">
+          <li>담당자 회신 84건을 반영한 뒤 불량률 A <b>8.69%</b> · B 3.73% · C 1.62%</li>
+          <li>A사는 주차가 지날수록 치수가 커지는 흐름</li>
+          <li>라인·작업조 히트맵으로 A사 불량이 몰린 곳을 확인</li>
+        </ul>
+        <a class="more" href="supplier-review/supplier_review.html">대시보드 열기 →</a>
+      </div>
+    </article>
+
+    <article class="card" data-base="correlation/graphs/" data-slides='[["05_상관계수_히트맵.png","변수 간 상관계수 히트맵"],["04_가공시간_치수_산점도.png","가공시간과 치수"],["07_A사_설비별_누적가공수_치수.png","A사 설비별 누적가공수와 치수"],["a_l2_m2_daily_mean_dimension.png","A-L2-M2 생산일별 평균 치수"]]'>
+      <div class="body">
+        <span class="tag">04회차</span>
+        <h2><a href="correlation/correlation_dashboard.html">협력사 생산조건 검토</a></h2>
+        <ul class="points">
+          <li>가공시간·공구 누적가공수가 클수록 치수가 커짐 (r <b>0.69</b> / <b>0.66</b>)</li>
+          <li>A사 4개 설비 모두에서 공통으로 나타나고, 2호선 불량률이 가장 높음</li>
+          <li>상관은 원인의 증거가 아니므로 공구 교체 기준·보정 이력부터 확인</li>
+        </ul>
+        <a class="more" href="correlation/correlation_dashboard.html">대시보드 열기 →</a>
+      </div>
+    </article>
   </div>
 
   <div class="panel" id="cafe" role="tabpanel" aria-labelledby="tab-cafe" hidden>
     <p>카페 브랜드 5개 매장의 일일 주문 데이터로 다음 날 주문건수를 예측합니다. 실제 지역명을 사용한 교육용 가상 매장 자료입니다.</p>
-    <a class="card" href="orders-forecast/orders_dashboard.html">
-      <span class="tag">05회차</span>
-      <h2>매장 주문량 예측 검토</h2>
-      <p>매장·요일별 주문 현황, 실제·예측 비교와 회귀계수 해석, 강남역매장 심화 검토(광복절 주 상세·영업시간 조건별 예측·강남·판교 비교)를 한 화면에서 확인합니다.</p>
-    </a>
-    <a class="card" href="model-evaluation/model_evaluation.html">
-      <span class="tag">06회차</span>
-      <h2>주문량 예측 모델 평가</h2>
-      <p>매장별 평균·첫 회귀·정보추가·행사정보 추가 네 방법의 MAE·RMSE 비교, 매장별 오차 방향 해석, 2D·3D·4D 그래프를 확인합니다.</p>
-    </a>
+
+    <article class="card" data-base="orders-forecast/graphs/" data-slides='[["실제_vs_예측_산점도_매장비교.png","평가기간 실제 vs 예측 (매장별)"],["매장_요일별_평균주문건수_히트맵.png","매장·요일별 평균 주문건수"],["매장별_평균주문건수_학습기간.png","매장별 평균 주문건수 (학습기간)"],["강남_주간상세_0810_0816.png","강남역매장 8/10~8/16 상세"],["강남_판교_월별_평균오차.png","강남·판교 월별 평균오차"]]'>
+      <div class="body">
+        <span class="tag">05회차</span>
+        <h2><a href="orders-forecast/orders_dashboard.html">매장 주문량 예측 검토</a></h2>
+        <ul class="points">
+          <li>첫 선형회귀: 매장·요일·영업예정시간·예정할인율로 주문건수 예측</li>
+          <li>영업 1시간당 <b>+21.6건</b>, 토요일은 월요일보다 약 53건 많음</li>
+          <li>강남 8/15(광복절)에 128.8건 많게 예측 — 공휴일 정보가 빠진 영향</li>
+        </ul>
+        <a class="more" href="orders-forecast/orders_dashboard.html">대시보드 열기 →</a>
+      </div>
+    </article>
+
+    <article class="card" data-base="model-evaluation/graphs/" data-slides='[["네방법_MAE_RMSE_비교.png","네 방법 MAE·RMSE 비교"],["네방법_MAE_RMSE_평균오차_4D.png","4D: 오차 크기(높이) + 방향(색)"],["잠실역매장_날짜별_예측오차.png","잠실역매장 날짜별 예측오차"],["네방법_MAE_RMSE_비교_3D.png","네 방법 비교 3D"]]'>
+      <div class="body">
+        <span class="tag">06회차</span>
+        <h2><a href="model-evaluation/model_evaluation.html">주문량 예측 모델 평가</a></h2>
+        <ul class="points">
+          <li>MAE: 매장별 평균 59.4 → 첫 회귀 56.3 → 정보추가 47.4 → 행사정보 추가 <b>46.0</b></li>
+          <li>주변행사 효과 약 <b>+107건</b>, 행사일 MAE 116.5 → 48.2</li>
+          <li>대부분 매장을 여전히 적게 예측 (잠실역 평균 +75건)</li>
+        </ul>
+        <a class="more" href="model-evaluation/model_evaluation.html">대시보드 열기 →</a>
+      </div>
+    </article>
   </div>
 </main>
 <script>
@@ -77,6 +137,29 @@
     document.querySelectorAll('.tabs a').forEach(a => a.setAttribute('aria-selected', a.getAttribute('aria-controls') === id));
   }
   addEventListener('hashchange', show); show();
+
+  document.querySelectorAll('.card[data-slides]').forEach(card => {
+    const base = card.dataset.base, slides = JSON.parse(card.dataset.slides);
+    const wrap = document.createElement('div'); wrap.className = 'slider';
+    const track = document.createElement('div'); track.className = 'track';
+    slides.forEach(([f, cap], i) => {
+      const fig = document.createElement('figure'); fig.className = 'slide';
+      const img = document.createElement('img');
+      img.src = base + encodeURIComponent(f); img.alt = cap; img.loading = i ? 'lazy' : 'eager';
+      const fc = document.createElement('figcaption'); fc.textContent = cap;
+      fig.append(img, fc); track.append(fig);
+    });
+    const dots = document.createElement('span'); dots.className = 'dots';
+    const go = d => track.scrollBy({ left: d * track.clientWidth, behavior: 'smooth' });
+    const btn = (cls, txt, d, label) => { const b = document.createElement('button'); b.className = 'nav ' + cls; b.textContent = txt; b.setAttribute('aria-label', label); b.onclick = () => go(d); return b; };
+    const update = () => { const w = track.clientWidth; const i = w ? Math.round(track.scrollLeft / w) : 0; dots.textContent = `${i + 1} / ${slides.length}`; };
+    addEventListener('hashchange', () => requestAnimationFrame(update));
+    addEventListener('resize', update);
+    track.addEventListener('scroll', update, { passive: true });
+    wrap.append(track, dots);
+    if (slides.length > 1) wrap.append(btn('prev', '‹', -1, '이전 그래프'), btn('next', '›', 1, '다음 그래프'));
+    card.prepend(wrap); update();
+  });
 </script>
 </body>
 </html>
