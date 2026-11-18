@@ -81,17 +81,15 @@
     <div class="tabs" id="dimTabs">
       <button data-dim="2d" aria-pressed="true">2D</button>
       <button data-dim="3d" aria-pressed="false">3D</button>
-      <button data-dim="4d" aria-pressed="false">4D (색 = 평균오차)</button>
     </div>
     <div id="gallery"></div>
-    <p class="note">3D·4D는 전체 경향을 보는 보조 그래프입니다. 원근 때문에 앞쪽 막대가 커 보이니 정확한 값은 2D 그래프나 표에서 읽으세요.</p>
+    <p class="note">3D는 전체 경향을 보는 보조 그래프입니다. 원근 때문에 앞쪽 막대가 커 보이니 정확한 값은 2D 그래프나 표에서 읽으세요.</p>
   </section>
 </main>
 <script>
   const sets = {
     '2d': [['네 방법 MAE·RMSE 비교','네방법_MAE_RMSE_비교.png'],['세 방법 비교','세방법_MAE_RMSE_비교.png'],['매장별 평균 vs 첫 회귀','매장별평균_vs_첫회귀_MAE_RMSE.png'],['잠실역매장 날짜별 예측오차 (첫 회귀)','잠실역매장_날짜별_예측오차.png']],
-    '3d': [['네 방법 비교 3D','네방법_MAE_RMSE_비교_3D.png'],['세 방법 비교 3D','세방법_MAE_RMSE_비교_3D.png'],['매장별 평균 vs 첫 회귀 3D','매장별평균_vs_첫회귀_MAE_RMSE_3D.png'],['잠실역매장 날짜별 예측오차 3D','잠실역매장_날짜별_예측오차_3D.png']],
-    '4d': [['네 방법 비교 4D: 높이 = MAE·RMSE, 색 = 평균오차 (파랑 적게 / 빨강 많게 예측)','네방법_MAE_RMSE_평균오차_4D.png']]
+    '3d': [['네 방법 비교 3D','네방법_MAE_RMSE_비교_3D.png'],['세 방법 비교 3D','세방법_MAE_RMSE_비교_3D.png'],['매장별 평균 vs 첫 회귀 3D','매장별평균_vs_첫회귀_MAE_RMSE_3D.png'],['잠실역매장 날짜별 예측오차 3D','잠실역매장_날짜별_예측오차_3D.png']]
   };
   const g = document.getElementById('gallery');
   function render(dim) {
