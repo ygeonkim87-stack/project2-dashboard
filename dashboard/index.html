@@ -59,33 +59,6 @@
 
   <div class="panel" id="quality" role="tabpanel" aria-labelledby="tab-quality">
     <p>입고검사 데이터로 협력사 품질과 생산조건을 살펴봅니다.</p>
-
-    <article class="card" data-base="inspection-eda/graphs/" data-slides='[["01_협력사_라인별_불량률.png","협력사·라인별 불량률"],["02_불량유형_건수.png","불량유형별 건수"]]'>
-      <div class="body">
-        <span class="tag">02회차</span>
-        <h2><a href="inspection-eda/inspection_dashboard.html">입고검사 EDA 대시보드</a></h2>
-        <ul class="points">
-          <li>부품 6,000개 검사, 전체 불량률 <b>4.67%</b></li>
-          <li>협력사 A <b>8.51%</b> · B 2.86% · C 1.40% — A사가 C사의 약 6배</li>
-          <li>불량 대부분은 <b>치수 기준 이탈</b>(175개), 중량 이탈 60개</li>
-        </ul>
-        <a class="more" href="inspection-eda/inspection_dashboard.html">대시보드 열기 →</a>
-      </div>
-    </article>
-
-    <article class="card" data-base="supplier-review/graphs/" data-slides='[["01_협력사별_측정치수_히스토그램.png","협력사별 측정치수 분포"],["02_협력사별_측정치수_박스플롯.png","협력사별 측정치수 박스플롯"],["03_A사_1주차_8주차_정상부품_치수_히스토그램.png","A사 1주차 vs 8주차 정상부품 치수"],["04_A사_라인_작업조별_불량수량_불량률_히트맵.png","A사 라인·작업조별 불량률"]]'>
-      <div class="body">
-        <span class="tag">03회차</span>
-        <h2><a href="supplier-review/supplier_review.html">협력사 품질 검토</a></h2>
-        <ul class="points">
-          <li>담당자 회신 84건을 반영한 뒤 불량률 A <b>8.69%</b> · B 3.73% · C 1.62%</li>
-          <li>A사는 주차가 지날수록 치수가 커지는 흐름</li>
-          <li>라인·작업조 히트맵으로 A사 불량이 몰린 곳을 확인</li>
-        </ul>
-        <a class="more" href="supplier-review/supplier_review.html">대시보드 열기 →</a>
-      </div>
-    </article>
-
     <article class="card" data-base="correlation/graphs/" data-slides='[["05_상관계수_히트맵.png","변수 간 상관계수 히트맵"],["04_가공시간_치수_산점도.png","가공시간과 치수"],["07_A사_설비별_누적가공수_치수.png","A사 설비별 누적가공수와 치수"],["a_l2_m2_daily_mean_dimension.png","A-L2-M2 생산일별 평균 치수"]]'>
       <div class="body">
         <span class="tag">04회차</span>
@@ -98,24 +71,34 @@
         <a class="more" href="correlation/correlation_dashboard.html">대시보드 열기 →</a>
       </div>
     </article>
+    <article class="card" data-base="supplier-review/graphs/" data-slides='[["01_협력사별_측정치수_히스토그램.png","협력사별 측정치수 분포"],["02_협력사별_측정치수_박스플롯.png","협력사별 측정치수 박스플롯"],["03_A사_1주차_8주차_정상부품_치수_히스토그램.png","A사 1주차 vs 8주차 정상부품 치수"],["04_A사_라인_작업조별_불량수량_불량률_히트맵.png","A사 라인·작업조별 불량률"]]'>
+      <div class="body">
+        <span class="tag">03회차</span>
+        <h2><a href="supplier-review/supplier_review.html">협력사 품질 검토</a></h2>
+        <ul class="points">
+          <li>담당자 회신 84건을 반영한 뒤 불량률 A <b>8.69%</b> · B 3.73% · C 1.62%</li>
+          <li>A사는 주차가 지날수록 치수가 커지는 흐름</li>
+          <li>라인·작업조 히트맵으로 A사 불량이 몰린 곳을 확인</li>
+        </ul>
+        <a class="more" href="supplier-review/supplier_review.html">대시보드 열기 →</a>
+      </div>
+    </article>
+    <article class="card" data-base="inspection-eda/graphs/" data-slides='[["01_협력사_라인별_불량률.png","협력사·라인별 불량률"],["02_불량유형_건수.png","불량유형별 건수"]]'>
+      <div class="body">
+        <span class="tag">02회차</span>
+        <h2><a href="inspection-eda/inspection_dashboard.html">입고검사 EDA 대시보드</a></h2>
+        <ul class="points">
+          <li>부품 6,000개 검사, 전체 불량률 <b>4.67%</b></li>
+          <li>협력사 A <b>8.51%</b> · B 2.86% · C 1.40% — A사가 C사의 약 6배</li>
+          <li>불량 대부분은 <b>치수 기준 이탈</b>(175개), 중량 이탈 60개</li>
+        </ul>
+        <a class="more" href="inspection-eda/inspection_dashboard.html">대시보드 열기 →</a>
+      </div>
+    </article>
   </div>
 
   <div class="panel" id="cafe" role="tabpanel" aria-labelledby="tab-cafe" hidden>
     <p>카페 브랜드 5개 매장의 일일 주문 데이터로 다음 날 주문건수를 예측합니다. 실제 지역명을 사용한 교육용 가상 매장 자료입니다.</p>
-
-    <article class="card" data-base="orders-forecast/graphs/" data-slides='[["실제_vs_예측_산점도_매장비교.png","평가기간 실제 vs 예측 (매장별)"],["매장_요일별_평균주문건수_히트맵.png","매장·요일별 평균 주문건수"],["매장별_평균주문건수_학습기간.png","매장별 평균 주문건수 (학습기간)"],["강남_주간상세_0810_0816.png","강남역매장 8/10~8/16 상세"],["강남_판교_월별_평균오차.png","강남·판교 월별 평균오차"]]'>
-      <div class="body">
-        <span class="tag">05회차</span>
-        <h2><a href="orders-forecast/orders_dashboard.html">매장 주문량 예측 검토</a></h2>
-        <ul class="points">
-          <li>첫 선형회귀: 매장·요일·영업예정시간·예정할인율로 주문건수 예측</li>
-          <li>영업 1시간당 <b>+21.6건</b>, 토요일은 월요일보다 약 53건 많음</li>
-          <li>강남 8/15(광복절)에 128.8건 많게 예측 — 공휴일 정보가 빠진 영향</li>
-        </ul>
-        <a class="more" href="orders-forecast/orders_dashboard.html">대시보드 열기 →</a>
-      </div>
-    </article>
-
     <article class="card" data-base="model-evaluation/graphs/" data-slides='[["네방법_MAE_RMSE_평균오차_4D.png","네 방법 비교: 오차 크기(높이) + 방향(색)"],["잠실역매장_날짜별_예측오차_3D.png","잠실역매장 날짜별 예측오차"]]'>
       <div class="body">
         <span class="tag">06회차</span>
@@ -126,6 +109,18 @@
           <li>대부분 매장을 여전히 적게 예측 (잠실역 평균 +75건)</li>
         </ul>
         <a class="more" href="model-evaluation/orders_evaluation.html">대시보드 열기 →</a>
+      </div>
+    </article>
+    <article class="card" data-base="orders-forecast/graphs/" data-slides='[["실제_vs_예측_산점도_매장비교.png","평가기간 실제 vs 예측 (매장별)"],["매장_요일별_평균주문건수_히트맵.png","매장·요일별 평균 주문건수"],["매장별_평균주문건수_학습기간.png","매장별 평균 주문건수 (학습기간)"],["강남_주간상세_0810_0816.png","강남역매장 8/10~8/16 상세"],["강남_판교_월별_평균오차.png","강남·판교 월별 평균오차"]]'>
+      <div class="body">
+        <span class="tag">05회차</span>
+        <h2><a href="orders-forecast/orders_dashboard.html">매장 주문량 예측 검토</a></h2>
+        <ul class="points">
+          <li>첫 선형회귀: 매장·요일·영업예정시간·예정할인율로 주문건수 예측</li>
+          <li>영업 1시간당 <b>+21.6건</b>, 토요일은 월요일보다 약 53건 많음</li>
+          <li>강남 8/15(광복절)에 128.8건 많게 예측 — 공휴일 정보가 빠진 영향</li>
+        </ul>
+        <a class="more" href="orders-forecast/orders_dashboard.html">대시보드 열기 →</a>
       </div>
     </article>
   </div>
