@@ -30,7 +30,7 @@
   .conclusion { background: var(--good-bg); border-color: #a7f3d0; }
   .conclusion h3 { color: var(--good); }
   .two { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); margin-top: 14px; }
-  @media (max-width: 820px) { .two { grid-template-columns: 1fr; } }
+  @media (max-width: 820px) { .two { grid-template-columns: minmax(0, 1fr); } }
   .tbl-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
   th, td { padding: 10px 8px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }

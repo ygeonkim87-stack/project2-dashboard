@@ -99,16 +99,17 @@
 
   <div class="panel" id="cafe" role="tabpanel" aria-labelledby="tab-cafe" hidden>
     <p>카페 브랜드 5개 매장의 일일 주문 데이터로 다음 날 주문건수를 예측합니다. 실제 지역명을 사용한 교육용 가상 매장 자료입니다.</p>
-    <article class="card" data-base="model-review/graphs/" data-slides='[["eval_mae_3models_08.png","6~8월 평가 MAE: 선형회귀·나무·랜덤포레스트"],["tree_depth_mae_08.png","나무 깊이별 학습·평가 MAE (과적합)"],["store_lines_08.png","판교역매장 실제 vs 세 모델 예측"],["final_store_line_08.png","9~10월 최종 평가 (잠실역매장)"]]'>
+    <article class="card" data-base="model-review/graphs/" data-slides='[["eval_mae_3models_08.png","6~8월 평가 MAE: 선형회귀·나무·랜덤포레스트"],["tree_depth_mae_08.png","나무 깊이별 학습·평가 MAE (과적합)"],["store_lines_08.png","판교역매장 실제 vs 세 모델 예측"],["final_store_line_08.png","9~10월 최종 평가 (잠실역매장)"],["window_mae_by_store.png","추가실습: 학습 범위별 8월 MAE"],["update_oct_mae_by_store.png","추가실습: 10월 고정 vs 매월 재학습"]]'>
       <div class="body">
         <span class="tag">07회차</span>
-        <h2><a href="model-review/orders_model_review.html">매장 주문량 예측 모델 검토</a></h2>
+        <h2><a href="model-review/orders_model_review_extended.html">매장 주문량 예측 모델 검토</a></h2>
         <ul class="points">
           <li>6~8월 평가 MAE: 선형회귀 <b>27.16</b> · 랜덤포레스트 30.59 · 나무(깊이 8) 33.02</li>
           <li>나무 제한없음: 학습 MAE 0.00 → 평가 39.54 (과적합)</li>
           <li>선택 모델 선형회귀, 9~10월 최종 MAE <b>23.85</b> · RMSE 30.07</li>
+          <li>추가실습: 학습 범위는 전체 이력(8월 MAE 27.85), 매월 재학습 개선은 10월 −0.17건으로 작음</li>
         </ul>
-        <a class="more" href="model-review/orders_model_review.html">대시보드 열기 →</a>
+        <a class="more" href="model-review/orders_model_review_extended.html">대시보드 열기 →</a>
       </div>
     </article>
     <article class="card" data-base="model-evaluation/graphs/" data-slides='[["방법별_MAE_RMSE.png","방법별 MAE·RMSE (전체)"],["네방법_MAE_RMSE_평균오차_4D.png","네 방법 비교: 오차 크기(높이) + 방향(색)"],["잠실역매장_날짜별_예측오차_3D.png","잠실역매장 날짜별 예측오차"]]'>
