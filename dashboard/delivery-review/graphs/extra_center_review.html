@@ -1,0 +1,31 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>센터별 점검 결과</title><style>
+:root{--bg:#f7f7f5;--card:#fff;--text:#1f2328;--muted:#5f6670;--line:#e3e3df;--accent:#2f6fde;--chip:#eef3fc;--red:#c0392b;--redbg:#fdecea;--amber:#b7791f;--green:#2e7d32}
+@media (prefers-color-scheme:dark){:root{--bg:#16181b;--card:#1f2226;--text:#e8eaed;--muted:#a0a6ad;--line:#30343a;--accent:#7aa7ff;--chip:#252b36;--red:#ff7a6b;--redbg:#3a2321;--amber:#e0b050;--green:#7cc47f}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.6}
+main{max-width:1000px;margin:0 auto;padding:40px 16px}h1{font-size:1.6rem;margin:0 0 4px}h2{font-size:1.25rem;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}h3{font-size:1.05rem;margin:22px 0 6px}
+.sub,.note{color:var(--muted);font-size:.92rem}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:12px 0}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}.kpi b{display:block;font-size:1.45rem;font-variant-numeric:tabular-nums}.kpi span{color:var(--muted);font-size:.82rem}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.88rem;background:var(--card)}th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;white-space:nowrap}th{color:var(--muted);font-weight:600}td.n{text-align:right;font-variant-numeric:tabular-nums}tr.total td{font-weight:700}
+img.g{width:100%;border-radius:8px;border:1px solid var(--line);background:#fff}
+.badge{display:inline-block;font-size:.72rem;padding:1px 7px;border-radius:999px;background:var(--chip);color:var(--accent);font-weight:600}.badge.post{background:var(--redbg);color:var(--red)}
+.scope{background:var(--chip);border-radius:8px;padding:8px 12px;font-size:.88rem;margin:8px 0}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:end}.filters label{font-size:.8rem;color:var(--muted);display:flex;flex-direction:column}select,input{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--text)}
+tr.row{cursor:pointer}tr.row:hover td{background:var(--chip)}tr.sel td{background:var(--chip);font-weight:600}.hi{color:var(--red);font-weight:700}
+.detail{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.detail{grid-template-columns:1fr}}.detail dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:.88rem}.detail dt{color:var(--muted)}.detail dd{margin:0}
+.post-box{border:1px dashed var(--red);border-radius:8px;padding:10px 12px}
+svg text{fill:var(--text);font-size:12px}.tip{position:fixed;pointer-events:none;background:#1f2328;color:#fff;font-size:12px;padding:5px 8px;border-radius:6px;opacity:0}
+</style></head><body><main><h1>센터별 점검 결과 비교</h1>
+<div class="scope">범위: 평가 기간 2026-07-01~08-20 전체 주문 2,400건 · 센터 3곳 · 전체 주문 분석</div>
+<div class="tw"><table><thead><tr><th>물류센터</th><th>전체주문수</th><th>실제지연수</th><th>점검대상수</th><th>놓친지연수</th><th>놓친비율</th></tr></thead><tbody><tr><td>대전센터</td><td class="n">826</td><td class="n">113</td><td class="n">35</td><td class="n">93</td><td class=n>0.82</td></tr><tr><td>부산센터</td><td class="n">788</td><td class="n">144</td><td class="n">109</td><td class="n">80</td><td class=n>0.56</td></tr><tr><td>인천센터</td><td class="n">786</td><td class="n">159</td><td class="n">104</td><td class="n">98</td><td class=n>0.62</td></tr><tr class="total"><td>전체</td><td class="n">2,400</td><td class="n">416</td><td class="n">248</td><td class="n">271</td><td class=n>0.65</td></tr></tbody></table></div>
+<p class="note">점검 대상 = 지연 예측 1 · 놓친 지연 = 예측 0이면서 실제 지연 1 · 놓친 비율 = 놓친 지연 ÷ 실제 지연 (실제 지연이 0이면 계산 불가). 막대에 마우스를 올리면 상세 수치가 보입니다.</p>
+<div class="detail"><div class="card"><b>놓친 지연 건수</b><div id="c-cnt"></div></div><div class="card"><b>실제 지연 중 놓친 비율</b><div id="c-rat"></div></div></div>
+</main><div class="tip" id="tip"></div><script>const CD=[{"c": "대전센터", "miss": 93, "act": 113, "pick": 35, "n": 826, "ratio": "0.82"}, {"c": "부산센터", "miss": 80, "act": 144, "pick": 109, "n": 788, "ratio": "0.56"}, {"c": "인천센터", "miss": 98, "act": 159, "pick": 104, "n": 786, "ratio": "0.62"}, {"c": "전체", "miss": 271, "act": 416, "pick": 248, "n": 2400, "ratio": "0.65"}];
+const tip=document.getElementById('tip');
+function bars(id,rows,val,fmt,max,color){const W=440,H=230,L=70,B=30,T=20,bw=(W-L-10)/rows.length;let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img">`;
+for(let k=0;k<=4;k++){const v=max*k/4,y=H-B-(H-B-T)*k/4;s+=`<line x1="${L}" x2="${W-5}" y1="${y}" y2="${y}" stroke="currentColor" opacity=".12"/><text x="${L-6}" y="${y+4}" text-anchor="end" opacity=".7">${fmt(v,1)}</text>`}
+rows.forEach((r,i)=>{const v=val(r);const x=L+i*bw+bw*.2,w=bw*.6;if(v==null){s+=`<text x="${x+w/2}" y="${H-B-8}" text-anchor="middle">계산 불가</text>`}else{const h=(H-B-T)*v/max,y=H-B-h;s+=`<rect data-i="${i}" x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${r.c=='전체'?'#8a94a3':color}"/><text x="${x+w/2}" y="${y-5}" text-anchor="middle" font-weight="600">${fmt(v)}</text>`}
+s+=`<text x="${x+w/2}" y="${H-10}" text-anchor="middle">${r.c}</text>`});
+const el=document.getElementById(id);el.innerHTML=s+'</svg>';el.querySelectorAll('rect').forEach(b=>{const r=rows[b.dataset.i];b.onmousemove=e=>{tip.style.opacity=1;tip.style.left=e.clientX+12+'px';tip.style.top=e.clientY+12+'px';tip.textContent=`${r.c}: 놓친 지연 ${r.miss}건 / 실제 지연 ${r.act}건 → 놓친 비율 ${r.ratio} · 점검 대상 ${r.pick}건 · 전체 ${r.n}건`};b.onmouseleave=()=>tip.style.opacity=0})}
+function drawCenter(){const rows=CD;bars('c-cnt',rows,r=>r.miss,(v,a)=>a?Math.round(v):v+'건',Math.max(...rows.filter(r=>r.c!='전체').map(r=>r.miss))*1.25,'#c0392b');
+const rr=rows.filter(r=>1);bars('c-rat',rr,r=>r.ratio=='계산 불가'?null:+r.ratio,(v,a)=>a?v.toFixed(2):v.toFixed(2),1,'#2f6fde')}
+drawCenter();</script></body></html>

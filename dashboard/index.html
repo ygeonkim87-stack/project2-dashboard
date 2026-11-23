@@ -55,7 +55,25 @@
   <nav class="tabs" role="tablist">
     <a href="#quality" role="tab" id="tab-quality" aria-controls="quality">입고검사 품질 분석</a>
     <a href="#cafe" role="tab" id="tab-cafe" aria-controls="cafe">카페 브랜드 매장 분석</a>
+    <a href="#delivery" role="tab" id="tab-delivery" aria-controls="delivery">온라인 배송 지연 분석</a>
   </nav>
+
+  <div class="panel" id="delivery" role="tabpanel" aria-labelledby="tab-delivery" hidden>
+    <p>온라인 판매회사의 주문을 오전 9시 출고 전에 점검해, 배송 지연 위험이 높은 주문부터 찾습니다. 교육용 합성 데이터입니다.</p>
+    <article class="card" data-base="delivery-review/graphs/" data-slides='[["decision_tree_top2.png","의사결정나무 첫 두 단계"],["eval_prob_hist.png","평가 기간 실제 결과별 예측 지연확률"],["load_ratio_delay_rate.png","센터물량부하율 구간별 지연률 (학습 기간)"]]'>
+      <div class="body">
+        <span class="tag">09회차</span>
+        <h2><a href="delivery-review/delivery_review_extra.html">배송 지연 위험 점검 검토</a></h2>
+        <ul class="points">
+          <li>의사결정나무 첫 기준: 배송여유 0일 → 거리 250km 초과 시 지연률 <b>51.1%</b></li>
+          <li>평가(7/1~8/20) 2,400건: 점검 대상 248건, 정밀도 <b>58.47%</b> · 재현율 <b>34.86%</b></li>
+          <li>추가실습: 대전센터는 실제 지연 중 놓친 비율 <b>0.82</b>로 가장 높음 (전체 0.65)</li>
+          <li>추가실습: 예측 오류 사례 비교와, 필터·상세보기를 갖춘 아침 점검 화면</li>
+        </ul>
+        <a class="more" href="delivery-review/delivery_review_extra.html">대시보드 열기 →</a>
+      </div>
+    </article>
+  </div>
 
   <div class="panel" id="quality" role="tabpanel" aria-labelledby="tab-quality">
     <p>입고검사 데이터로 협력사 품질과 생산조건을 살펴봅니다.</p>
@@ -140,7 +158,8 @@
 </main>
 <script>
   function show() {
-    const id = location.hash === '#cafe' ? 'cafe' : 'quality';
+    const h = location.hash.slice(1);
+    const id = ['cafe', 'delivery'].includes(h) ? h : 'quality';
     document.querySelectorAll('.panel').forEach(p => p.hidden = p.id !== id);
     document.querySelectorAll('.tabs a').forEach(a => a.setAttribute('aria-selected', a.getAttribute('aria-controls') === id));
   }
