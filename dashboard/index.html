@@ -60,6 +60,19 @@
 
   <div class="panel" id="delivery" role="tabpanel" aria-labelledby="tab-delivery" hidden>
     <p>온라인 판매회사의 주문을 오전 9시 출고 전에 점검해, 배송 지연 위험이 높은 주문부터 찾습니다. 교육용 합성 데이터입니다.</p>
+    <article class="card" data-base="delivery-model-review/graphs/" data-slides='[["metrics_4models_10.png","네 모델의 정확도·정밀도·재현율·F1 (평가, 50% 기준)"],["confusion_matrix_4models_10.png","네 모델의 혼동행렬"],["dashboard_model_comparison_screenshot.png","대시보드 모델 비교 화면"]]'>
+      <div class="body">
+        <span class="tag">10회차</span>
+        <h2><a href="delivery-model-review/delivery_model_review.html">배송 지연 점검 모델 비교 검토</a></h2>
+        <ul class="points">
+          <li>깊이 4·깊이 6 나무, 랜덤포레스트, 가중치 적용 랜덤포레스트를 7~8월 2,400건·50% 기준으로 비교</li>
+          <li>깊이 6: 215건 점검으로 지연 132건 발견, 정밀도 <b>61.40%</b> · 재현율 <b>31.73%</b></li>
+          <li>가중치 적용 RF: 재현율 <b>75.24%</b>, 대신 871건 점검(헛점검 558건)</li>
+          <li>추가실습: 인천센터 모델 비교 · 일별 점검 물량 · class_weight {0:1, 1:3} 비교</li>
+        </ul>
+        <a class="more" href="delivery-model-review/delivery_model_review.html">대시보드 열기 →</a>
+      </div>
+    </article>
     <article class="card" data-base="delivery-review/graphs/" data-slides='[["decision_tree_top2.png","의사결정나무 첫 두 단계"],["eval_prob_hist.png","평가 기간 실제 결과별 예측 지연확률"],["load_ratio_delay_rate.png","센터물량부하율 구간별 지연률 (학습 기간)"]]'>
       <div class="body">
         <span class="tag">09회차</span>
