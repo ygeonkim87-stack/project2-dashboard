@@ -1,0 +1,106 @@
+{
+  "source": "delivery_features_09.csv",
+  "row_key": "주문ID",
+  "target": "배송지연여부",
+  "positive_label": 1,
+  "numeric_inputs": [
+    "상품수량",
+    "총중량_kg",
+    "배송거리_km",
+    "센터출고대기건수",
+    "센터당일처리계획건수",
+    "배송여유일수",
+    "주문후_경과시간",
+    "센터물량부하율"
+  ],
+  "categorical_inputs": [
+    "물류센터",
+    "배송지역",
+    "운송사",
+    "배송유형",
+    "상품군",
+    "재고확보상태",
+    "점검요일"
+  ],
+  "split_column": "점검기준일시",
+  "train_period": [
+    "2026-01-01",
+    "2026-06-30"
+  ],
+  "evaluation_period": [
+    "2026-07-01",
+    "2026-08-31"
+  ],
+  "operations_period": [
+    "2026-09-01",
+    "2026-10-31"
+  ],
+  "threshold": 0.5,
+  "preprocessing": {
+    "numeric": "passthrough",
+    "categorical": {
+      "class": "OneHotEncoder",
+      "drop": null,
+      "handle_unknown": "ignore",
+      "output": "dense; use sparse_output=False or sparse=False depending on sklearn version"
+    },
+    "fit_on": "train only",
+    "column_order": "numeric_inputs then categorical_inputs",
+    "save": "save fitted preprocessing and estimator together as Pipeline"
+  },
+  "models": [
+    {
+      "name": "의사결정나무 깊이4",
+      "estimator": "DecisionTreeClassifier",
+      "file": "delivery_tree_depth4_10.joblib",
+      "parameters": {
+        "max_depth": 4,
+        "min_samples_leaf": 50,
+        "random_state": 20261123
+      }
+    },
+    {
+      "name": "의사결정나무 깊이6",
+      "estimator": "DecisionTreeClassifier",
+      "file": "delivery_tree_depth6_10.joblib",
+      "parameters": {
+        "max_depth": 6,
+        "min_samples_leaf": 50,
+        "random_state": 20261123
+      }
+    },
+    {
+      "name": "랜덤포레스트",
+      "estimator": "RandomForestClassifier",
+      "file": "delivery_forest_10.joblib",
+      "parameters": {
+        "n_estimators": 200,
+        "max_depth": 6,
+        "min_samples_leaf": 50,
+        "max_features": "sqrt",
+        "bootstrap": true,
+        "random_state": 20261123,
+        "class_weight": null
+      }
+    },
+    {
+      "name": "랜덤포레스트 balanced",
+      "estimator": "RandomForestClassifier",
+      "file": "delivery_forest_balanced_10.joblib",
+      "parameters": {
+        "n_estimators": 200,
+        "max_depth": 6,
+        "min_samples_leaf": 50,
+        "max_features": "sqrt",
+        "bootstrap": true,
+        "random_state": 20261123,
+        "class_weight": "balanced"
+      }
+    }
+  ],
+  "notes": [
+    "Settings restore the four lesson10 models; logistic is trained during lesson11.",
+    "No training or selection using September/October labels.",
+    "Reference CSV column suffixes: _확률 for probability, _예측 for class."
+  ]
+}
